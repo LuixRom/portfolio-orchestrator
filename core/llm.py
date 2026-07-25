@@ -1,12 +1,23 @@
 from langchain_groq import ChatGroq
 
-def get_llm(temperature: float = 0.0):
-    '''
-        Cliente de GPT-OSS 20B en Groq.
-        
-        La API key se lee automaticamente de la variable de entorno GROQ_API_KEY, asi que la clave nunca
-        aparece escrita en el código.
-    '''
-    
-    return ChatGroq(model="openai/gpt-oss-20b", temperature=temperature)
+TIERS = {
+    "easy":   {"provider": "groq","model": "openai/gpt-oss-20b"},
+    "medium": {"provider": "groq","model": "openai/gpt-oss-120b"},
+    "hard":   {"provider": "anthropic","model": "claude-sonnet-4-5"},
+}
+
+def get_llm(tier: str = "easy", temperature: float = 0.0):
+    '''Devuelve el cliente del modelo correspondiente al tier.'''
+    cfg = TIERS.get(tier)
+    if cfg is None:
+        raise ValueError(f"Tier desconocido: {tier!r}. Usa: {list(TIERS)}")
+
+    if cfg["provider"] == "groq":
+        return ChatGroq(model=cfg["model"], temperature=temperature)
+
+    if cfg["provider"] == "anthropic":
+        from langchain_anthropic import ChatAnthropic   # import local: solo si se usa
+        return ChatAnthropic(model=cfg["model"], temperature=temperature)
+
+    raise ValueError(f"Proveedor no soportado: {cfg['provider']}")
     

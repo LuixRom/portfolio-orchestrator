@@ -1,6 +1,6 @@
 from core.llm import get_llm
 
-def propose(instruction: str, profile: dict, current_content: str) -> str:
+def propose(instruction: str, profile: dict, current_content: str, tier: str = "easy") -> str:
     '''
         Genera el contenido nuevo del portafolio a partir de la instruccion.
 
@@ -23,7 +23,7 @@ def propose(instruction: str, profile: dict, current_content: str) -> str:
         f'CONTENIDO ACTUAL:\n{current_content}'
     )
     
-    resp = get_llm().invoke([
+    resp = get_llm(tier).invoke([          
         {"role": "system", "content": system},
         {"role": "user", "content": user},
     ])

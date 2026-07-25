@@ -2,3 +2,4 @@ python-dotenv
 langchain-groq
 langgraph
 langgraph-checkpoint-sqlite
+langchain-anthropic
