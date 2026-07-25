@@ -1,0 +1,19 @@
+{
+  "hero": {
+    "titulo": "Hola, soy Luis Anthony Romero Padilla",
+    "subtitulo": "Estudiante de Ciencia de la Computación | Full Stack Developer | AI Enthusiast"
+  },
+  "secciones": {
+    "presentacion": "Soy estudiante de Ciencia de la Computación apasionado por el desarrollo de software y la inteligencia artificial. Disfruto diseñar y construir aplicaciones Full Stack, APIs y sistemas bien estructurados, priorizando la calidad del código, la escalabilidad y el aprendizaje continuo.",
+
+    "proyectos": [],
+
+    "experiencia": [],
+
+    "contacto": {
+      "email": "anthonyromero.dev@gmail.com",
+      "linkedin": "https://linkedin.com/in/luis-anthony-romero-padilla-55bb22318",
+      "github": "https://github.com/LuixRom"
+    }
+  }
+}

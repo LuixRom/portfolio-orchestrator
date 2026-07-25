@@ -1,0 +1,94 @@
+{
+  "perfil": {
+    "nombre": "Luis Anthony Romero Padilla",
+    "titulo": "Estudiante de Ciencia de la Computacion",
+    "resumen": "Estudiante de Ciencia de la Computación orientado a sistemas de inteligencia artificial, desarrollo de software, con experiencia en proyectos Full Stack, APIs y bases de datos. Me interesa construir soluciones útiles, mantenibles y bien estructuradas.",
+    "ubicacion": "Lima, Peru",
+    "nivel_ingles": "B2 - intermedio-alto"
+  },
+
+  "contacto": {
+    "email": "anthonyromero.dev@gmail.com",
+    "linkedin": "https://linkedin.com/in/luis-anthony-romero-padilla-55bb22318",
+    "github": "https://github.com/LuixRom"
+  },
+
+  "objetivos": {
+    "roles_interes": [
+      "Software Engineer",
+      "Full Stack Developer",
+      "AI Engineer"
+    ],
+    "objetivo_corto_plazo": "Iniciar mi carrera profesional como Software Engineer o AI Engineer, participando en el desarrollo de aplicaciones, sistemas inteligentes y soluciones escalables."
+  },
+
+  "educacion": [
+    {
+      "institucion": "UTEC",
+      "carrera": "Ciencia de la Computacion",
+      "estado": "En curso"
+    }
+  ],
+
+  "idiomas": [
+    {
+      "idioma": "Espanol",
+      "nivel": "Nativo"
+    },
+    {
+      "idioma": "Ingles",
+      "nivel": "B2"
+    }
+  ],
+
+  "proyectos": [
+    {
+      "nombre": "Orquestador multiagente de portafolio",
+      "descripcion": "Sistema con LangGraph que crea y mantiene mi portafolio con aprobacion humana.",
+      "stack": [
+        "Python",
+        "LangGraph",
+        "Groq",
+        "Claude"
+      ],
+      "destacado": true
+    }
+  ],
+
+  "experiencia": [],
+
+  "habilidades": {
+    "lenguajes": [
+      "Python",
+      "TypeScript",
+      "JavaScript",
+      "C++"
+    ],
+    "frameworks": [
+      "LangGraph",
+      "Next.js",
+      "React",
+      "Express"
+    ],
+    "bases_de_datos": [
+      "PostgreSQL",
+      "MySQL",
+      "SQLite",
+      "MongoDB"
+    ],
+    "herramientas": [
+      "Git",
+      "GitHub",
+      "Docker"
+    ]
+  },
+
+  "certificaciones": [],
+
+  "intereses": [
+    "Desarrollo Full Stack",
+    "Sistemas multiagente",
+    "Arquitectura de software",
+    "Machine Learning"
+  ]
+}
