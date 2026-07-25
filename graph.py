@@ -3,7 +3,7 @@ from state import State
 from agents.router import router_node
 from agents.content import propose as content_propose
 from schemas.profile import load_profile
-from tools.workspace import create_workspace, read_file, write_file
+from tools.workspace import create_workspace, read_file, write_file, make_diff
 
 CONTENT_FILE = "content/site.json"
 
@@ -13,9 +13,15 @@ def propose_node(state: State) -> dict:
     current= read_file(ws, CONTENT_FILE)            
     profile= load_profile().model_dump()            
     nuevo= content_propose(state["instruction"], profile, current)
-    write_file(ws, CONTENT_FILE, nuevo)              
+    write_file(ws, CONTENT_FILE, nuevo)
+    
+    diff = make_diff(ws, CONTENT_FILE)              
     print(f'[propose] propuesta escrita en: {ws}')
-    return {"workspace": str(ws), "changed_files": [CONTENT_FILE]}
+    return {
+        "workspace": str(ws), 
+        "changed_files": [CONTENT_FILE],
+        "diff": diff,   
+    }
 
 def build_graph():
     builder = StateGraph(State)
