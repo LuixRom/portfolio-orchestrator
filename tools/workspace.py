@@ -55,3 +55,17 @@ def discard_workspace(ws) -> None:
     ws = Path(ws)
     if ws.exists():
         shutil.rmtree(ws)
+        
+def apply_workspace(ws, changed: list) -> None:
+    '''
+        Vuelca los archivos cambiados del workspace sobre main (portfolio/).
+
+        Esta es la UNICA funcion que escribe en portfolio/. Solo se llama
+        despues de tu aprobacion.
+    '''
+    ws = Path(ws)
+    for rel in changed:
+        src = ws / rel
+        dst = PORTFOLIO_DIR / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
