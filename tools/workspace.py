@@ -2,7 +2,7 @@ import shutil
 from pathlib import Path
 import difflib
 
-PORTFOLIO_DIR = Path("portfolio")
+PORTFOLIO_DIR = Path(__file__).resolve().parent.parent.parent / "portfolio-web"
 WORKSPACE_ROOT = Path(".workspaces")
 
 SECRET_PATTERNS = (".env", ".key", ".pem", "id_rsa", "credentials", "secrets")

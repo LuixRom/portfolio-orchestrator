@@ -3,3 +3,4 @@
 __pycache__/
 .workspaces/
 checkpoints.sqlite
+.langgraph_api/
