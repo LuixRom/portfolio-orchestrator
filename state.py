@@ -1,4 +1,6 @@
-from typing import TypedDict
+from typing import TypedDict, Annotated
+from langgraph.graph.message import add_messages
+from langchain_core.messages import AnyMessage
 
 class State(TypedDict, total = False):
     '''
@@ -6,7 +8,7 @@ class State(TypedDict, total = False):
         total=False -> todos los campos son opcionales: cada nodo llena solo lo que produce. Empiezan vacios
         y se van llenando paso a paso.
     '''
-    
+    messages: Annotated[list[AnyMessage], add_messages]
     instruction: str 
     run_id: str
     
