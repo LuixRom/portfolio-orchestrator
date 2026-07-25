@@ -1,6 +1,5 @@
 from langgraph.graph import StateGraph, START, END
 from langgraph.types import interrupt
-from langgraph.checkpoint.memory import InMemorySaver
 from state import State
 from agents.router import router_node
 from agents.content import propose as content_propose
@@ -76,4 +75,4 @@ def build_graph():
     return builder
 
 
-graph = build_graph().compile(checkpointer=InMemorySaver())
+
