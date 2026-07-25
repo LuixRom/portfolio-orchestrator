@@ -4,6 +4,7 @@ from state import State
 from agents.router import router_node
 from agents.content import propose as content_propose
 from schemas.profile import load_profile
+from tools.validators import run_validations
 from tools.workspace import (
     create_workspace, read_file, write_file, make_diff,
     apply_workspace, discard_workspace,
@@ -25,19 +26,20 @@ def propose_node(state: State) -> dict:
         "diff": diff,   
     }
     
-def approval_node(state: State) -> dict:
-    '''
-        PAUSA el grafo y espera tu decision.
-
-        interrupt() detiene la ejecucion y entrega este payload a quien este
-        manejando el grafo (tu terminal hoy, el panel web despues). Cuando
-        reanudas con una decision, ese valor se convierte en el retorno de interrupt().
-    '''
+def validate_node(state: State) -> dict:
+    '''Corre validaciones deterministas sobre la propuesta en el workspace.'''
+    resultado = run_validations(state["workspace"])
+    estado = "OK" if resultado["ok"] else "FALLO"
+    print(f"[validate] {estado} -> {[c['check'] for c in resultado['checks']]}")
+    return {"validation": resultado}
     
+def approval_node(state: State) -> dict:
     decision = interrupt({
         "instruccion": state["instruction"],
         "archivos": state["changed_files"],
         "diff": state["diff"],
+        "validacion_ok": state.get("validation", {}).get("ok"),
+        "validacion": state.get("validation"),
     })
     return {"decision": decision}
 
@@ -62,13 +64,15 @@ def build_graph():
     builder = StateGraph(State)
     builder.add_node("router", router_node)
     builder.add_node("propose", propose_node)
+    builder.add_node("validate", validate_node) 
     builder.add_node("approval", approval_node)
     builder.add_node("apply", apply_node)
     builder.add_node("discard", discard_node)
 
     builder.add_edge(START, "router")
     builder.add_edge("router", "propose")
-    builder.add_edge("propose", "approval")
+    builder.add_edge("propose", "validate")
+    builder.add_edge("validate", "approval")
     builder.add_conditional_edges("approval", route_decision, {"apply": "apply", "discard": "discard"})
     builder.add_edge("apply", END)
     builder.add_edge("discard", END)
