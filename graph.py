@@ -103,5 +103,5 @@ def build_graph():
     builder.add_edge("discard", END)
     return builder
 
-
+graph = build_graph().compile()
 
