@@ -4,9 +4,9 @@ from core.llm import get_llm
 
 RULES = [
     (r"\b(arquitectura|reestructur|migra|framework|routing|estructura del sitio)", "architecture", "high"),
-    (r"\b(color|estilo|layout|dise|espaciad|tipograf|component)","ui","medium"),
-    (r"\b(proyecto|experiencia|certificaci|habilidad|secci)","content","medium"),
-    (r"\b(texto|copy|contenido|bio|descripci|redacta|resumen|titular|hero|presentaci)","content","low"),
+    (r"\b(color|estilo|layout|dise|espaciad|tipograf|component|fondo|degradad|centr|margen|padding|responsive|hero)", "ui", "medium"),
+    (r"\b(proyecto|experiencia|certificaci|habilidad|secci)", "content", "medium"),
+    (r"\b(texto|copy|bio|descripci|redacta|resumen|titular|presentaci)", "content", "low"),
 ]
 
 def _rule_based(instruction: str):

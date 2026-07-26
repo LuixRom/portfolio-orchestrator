@@ -1,71 +1,49 @@
 import shutil
-from pathlib import Path
 import difflib
+from pathlib import Path
+
 
 PORTFOLIO_DIR = Path(__file__).resolve().parent.parent.parent / "portfolio-web"
-WORKSPACE_ROOT = Path(".workspaces")
-
-SECRET_PATTERNS = (".env", ".key", ".pem", "id_rsa", "credentials", "secrets")
-
-def _is_secret(name: str) -> bool:
-    low = name.lower()
-    return any(p in low for p in SECRET_PATTERNS)
+WORKSPACE_ROOT = Path(__file__).resolve().parent.parent.parent / ".workspaces"
 
 def create_workspace(run_id: str) -> Path:
-    '''Crea una copia AISLADA de portfolio/ para esta ejecucion.'''
-    WORKSPACE_ROOT.mkdir(exist_ok=True)
+    """Crea un workspace VACIO. Ya no copiamos el proyecto: solo escribiremos
+    ahi el/los archivo(s) propuestos, asi la operacion es instantanea."""
+    WORKSPACE_ROOT.mkdir(parents=True, exist_ok=True)
     ws = WORKSPACE_ROOT / run_id
     if ws.exists():
-        shutil.rmtree(ws)              
-    def ignore(_carpeta, nombres):
-        return [n for n in nombres if _is_secret(n)]
-    shutil.copytree(PORTFOLIO_DIR, ws, ignore=ignore)
+        shutil.rmtree(ws)
+    ws.mkdir(parents=True, exist_ok=True)
     return ws
 
-def read_file(ws: Path, rel: str) -> str:
-    return (ws / rel).read_text(encoding="utf-8")
-
-
-def make_diff(ws: Path, rel: str) -> str:
-    '''
-        Diff unificado de un archivo entre main (portfolio/) y el workspace.
-
-        Compara el original contra la propuesta y devuelve solo las diferencias,
-        en el mismo formato que 'git diff'.
-    '''
-    main_path= PORTFOLIO_DIR / rel
-    old= main_path.read_text(encoding="utf-8").splitlines(keepends=True) if main_path.exists() else []
-    new= (ws / rel).read_text(encoding="utf-8").splitlines(keepends=True)
-
-    diff= difflib.unified_diff(
-        old, new,
-        fromfile=f"main/{rel}",         
-        tofile=f"workspace/{rel}",      
-    )
-    return "".join(diff) or "(sin cambios)"
+def read_current(rel: str) -> str:
+    """Lee el contenido ACTUAL de un archivo desde main. Leer no muta main."""
+    return (PORTFOLIO_DIR / rel).read_text(encoding="utf-8")
 
 def write_file(ws: Path, rel: str, content: str) -> None:
-    '''Escribe SOLO dentro del workspace (jamas en portfolio/).'''
+    """Escribe la propuesta SOLO en el workspace (jamas en main)."""
     target = ws / rel
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
     
-def discard_workspace(ws) -> None:
-    '''Borra la copia aislada (se usara al descartar o tras aplicar).'''
-    ws = Path(ws)
-    if ws.exists():
-        shutil.rmtree(ws)
-        
-def apply_workspace(ws, changed: list) -> None:
-    '''
-        Vuelca los archivos cambiados del workspace sobre main (portfolio/).
+def make_diff(ws: Path, rel: str) -> str:
+    """Diff unificado del archivo entre main y el workspace."""
+    main_path = PORTFOLIO_DIR / rel
+    old = main_path.read_text(encoding="utf-8").splitlines(keepends=True) if main_path.exists() else []
+    new = (ws / rel).read_text(encoding="utf-8").splitlines(keepends=True)
+    diff = difflib.unified_diff(old, new, fromfile=f"main/{rel}", tofile=f"workspace/{rel}")
+    return "".join(diff) or "(sin cambios)"
 
-        Esta es la UNICA funcion que escribe en portfolio/. Solo se llama
-        despues de tu aprobacion.
-    '''
+def apply_workspace(ws, changed: list) -> None:
+    """Vuelca los archivos cambiados del workspace sobre main. Solo tras tu aprobacion."""
     ws = Path(ws)
     for rel in changed:
         src = ws / rel
         dst = PORTFOLIO_DIR / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
+        
+def discard_workspace(ws) -> None:
+    ws = Path(ws)
+    if ws.exists():
+        shutil.rmtree(ws)

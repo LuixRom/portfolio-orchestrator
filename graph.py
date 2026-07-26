@@ -9,10 +9,17 @@ from agents.planner import choose_tier
 from settings import CONTENT_FILE, MAX_RETRIES
 import uuid
 from langchain_core.messages import AIMessage
+from agents.frontend import propose as frontend_propose
 from tools.workspace import (
-    create_workspace, read_file, write_file, make_diff,
+    create_workspace, read_current, write_file, make_diff,
     apply_workspace, discard_workspace,
 )
+
+AGENTES = {
+    "content": {"fn": content_propose,  "file": "content/site.json"},
+    "ui": {"fn": frontend_propose, "file": "app/page.tsx"},
+    "architecture": {"fn": content_propose,  "file": "content/site.json"},  # por ahora
+}
 
 CONTENT_FILE = "content/site.json"
 
@@ -59,13 +66,15 @@ def plan_node(state: State) -> dict:
 
 def propose_node(state: State) -> dict:
     ws = create_workspace(state["run_id"])
-    current = read_file(ws, CONTENT_FILE)
+    agente = AGENTES.get(state["task_type"], AGENTES["content"])   
+    archivo = agente["file"]
+    current = read_current(archivo)
     profile = load_profile().model_dump()
-    nuevo = content_propose(state["instruction"], profile, current, state["tier"])
-    write_file(ws, CONTENT_FILE, nuevo)
-    diff = make_diff(ws, CONTENT_FILE)
-    print(f"[propose] con tier={state['tier']} -> {ws}")
-    return {"workspace": str(ws), "changed_files": [CONTENT_FILE], "diff": diff}
+    nuevo = agente["fn"](state["instruction"], profile, current, state["tier"])
+    write_file(ws, archivo, nuevo)
+    diff = make_diff(ws, archivo)
+    print(f"[propose] agente={state['task_type']} archivo={archivo} tier={state['tier']} -> {ws}")
+    return {"workspace": str(ws), "changed_files": [archivo], "diff": diff}
 
 def after_validate(state: State) -> str:
     '''Decide: si paso -> approval; si fallo y quedan intentos -> retry; si no -> approval.'''
@@ -103,9 +112,9 @@ def approval_node(state: State) -> dict:
             "allow_ignore": True,     
         },
         "description": (
-            f'**Tier usado:** {state.get('tier')}\n\n'
-            f'**Validación:** {'ok' if validacion_ok else ' falló'}\n\n'
-            f'```diff\n{state.get('diff', '')}\n```'
+            f"**Tier usado:** {state.get('tier')}\n\n"
+            f"**Validación:** {'ok' if validacion_ok else ' falló'}\n\n"
+            f"```diff\n{state.get('diff', '')}\n```"
         ),
     }
     response = interrupt([request])
